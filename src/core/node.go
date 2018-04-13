@@ -221,7 +221,7 @@ func (n *Node) updateFollowers() {
 			_, prevLogIndex, prevLogTerm := n.Log.GetEntryForRequest(n.Log.LastIndex())
 
 			er = &pb.EntryRequest{
-				CmdID:        -1,
+				LeaderCommit:        -1,
 				Term:         n.Term,
 				LeaderID:     n.ID,
 				PrevLogIndex: prevLogIndex,
@@ -230,7 +230,7 @@ func (n *Node) updateFollowers() {
 		} else {
 			entry, prevLogIndex, prevLogTerm := n.Log.GetEntryForRequest(peer.NextIndex)
 			er = &pb.EntryRequest{
-				CmdID:        entry.CmdID,
+				LeaderCommit:        entry.CmdID,
 				Term:         n.Term,
 				LeaderID:     n.ID,
 				PrevLogIndex: prevLogIndex,
@@ -246,7 +246,7 @@ func (n *Node) updateFollowers() {
 			continue
 		}
 
-		if er.CmdID == -1 {
+		if er.LeaderCommit == -1 {
 			// skip commit checks for heartbeats
 			continue
 		}
@@ -259,7 +259,7 @@ func (n *Node) updateFollowers() {
 		// servers; in addition, at least one entry from the leader’s current term must also be stored
 		// on a majority of the servers.
 		majority := int32((len(n.Cluster)+1)/2 + 1)
-		cr := n.Uncommitted[er.CmdID]
+		cr := n.Uncommitted[er.LeaderCommit]
 		cr.ReplicationCount++
 		if cr.ReplicationCount >= majority && cr.State != Committed {
 			cr.State = Committed
@@ -311,7 +311,7 @@ func (n *Node) doAppendEntries(er pb.EntryRequest) (pb.EntryResponse, error) {
 		return pb.EntryResponse{Term: n.Term, Success: true}, nil
 	}
 	e := &Entry{
-		CmdID: er.CmdID,
+		CmdID: er.LeaderCommit,
 		Index: er.PrevLogIndex + 1,
 		Term:  er.Term,
 		Data:  er.Data,

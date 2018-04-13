@@ -30,7 +30,7 @@ func (c *GRPCClientImpl) RequestVote(address string, request *pb.VoteRequest) (*
 	defer conn.Close()
 	client := pb.NewMgrClient(conn)
 	resp, err := client.RequestVote(context.Background(), request)
-	//log.Println("gather error "+err.Error())
+	log.Println("gather error "+err.Error())
 	return resp, err
 
 }

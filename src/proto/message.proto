@@ -14,7 +14,7 @@ message VoteRespond {
 }
 
 message EntryRequest {
-    int64 CmdID = 1;
+    int64 LeaderCommit = 1;
     int64 Term = 2;
     string LeaderID = 3;
     int64 PrevLogIndex = 4;

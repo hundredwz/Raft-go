@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package proto;
+
+message VoteRequest {
+    int64 Term = 1;
+    string CandidateID = 2;
+    int64 LastLogIndex = 3;
+    int64 LastLogTerm = 4;
+}
+message VoteRespond {
+    int64 Term = 1;
+    bool voteGranted = 2;
+}
+
+message EntryRequest {
+    int64 CmdID = 1;
+    int64 Term = 2;
+    string LeaderID = 3;
+    int64 PrevLogIndex = 4;
+    int64 PrevLogTerm = 5;
+    bytes Data = 6;
+}
+
+message EntryResponse {
+    int64 Term = 1;
+    bool Success = 2;
+}
+
+service Mgr {
+    rpc RequestVote (VoteRequest) returns (VoteRespond) {
+    }
+
+    rpc AppendEntries (EntryRequest) returns (EntryResponse) {
+    }
+}

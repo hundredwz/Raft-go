@@ -1,4 +1,4 @@
-#Go-Raft
+# Go-Raft
 
 This project is an implementation of Raft consensus protocol
 
